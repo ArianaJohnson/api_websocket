@@ -106,19 +106,19 @@ class ApiWebsocketStack(Stack):
 
 
         connection_integration = apigatewayv2.CfnIntegration(self, "connect_lambda",
-                                                             api_id = api_version.to_string(),
+                                                             api_id = cnf_api.ref,
                                                              integration_type= "AWS_PROXY",
-                                                             integration_uri= "",
+                                                             integration_uri= f"arn:aws:apigateway:{self.region}lambda:path/2015-03-31/{connect_function.function_arn}/invocations",
                                                              credentials_arn= role.role_arn)
 
         disconnect_integration = apigatewayv2.CfnIntegration(self, "disconnect_lambda",
-                                                             api_id= api_version.to_string(),
+                                                             api_id= cnf_api.ref,
                                                              integration_type="AWS_PROXY",
                                                              integration_uri= "",
                                                              credentials_arn=role.role_arn)
 
         msg_integration = apigatewayv2.CfnIntegration(self, "msg_lambda",
-                                                             api_id=cnf_api.to_string(),
+                                                             api_id=cnf_api.ref,
                                                              integration_type="AWS_PROXY",
                                                              integration_uri = "",
                                                              credentials_arn=role.role_arn)
@@ -126,19 +126,19 @@ class ApiWebsocketStack(Stack):
 
 
         connect_route = apigatewayv2.CfnRoute(self, "connect_route",
-                                              api_id= api_version.to_string(),
+                                              api_id= cnf_api.ref,
                                               route_key = "$connect",
                                               authorization_type= "NONE",
                                               target= "integrations/" + connection_integration.ref)
 
         disconnect_route = apigatewayv2.CfnRoute(self, "disconnect_route",
-                                              api_id=api_version.to_string(),
+                                              api_id=cnf_api.ref,
                                               route_key="$disconnect",
                                               authorization_type="NONE",
                                               target="integrations/" + disconnect_integration.ref)
 
         message_route = apigatewayv2.CfnRoute(self, "message_route",
-                                              api_id = api_version.to_string(),
+                                              api_id = cnf_api.ref,
                                               route_key="sendmessage",
                                               authorization_type="NONE",
                                               target="integrations/" + msg_integration.ref)
@@ -148,12 +148,12 @@ class ApiWebsocketStack(Stack):
 
         #deploy
         deployment = apigatewayv2.CfnDeployment(self, "deployment",
-                                                api_id=api_version.to_string(),)
+                                                api_id=cnf_api.ref,)
 
         development_stage = apigatewayv2.CfnStage(self, "development_stage",
                                                   stage_name="development",
                                                   deployment_id= deployment.ref,
-                                                  api_id=api_version.to_string(),
+                                                  api_id=cnf_api.ref,
                                                   )
 
 
