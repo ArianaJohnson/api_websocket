@@ -1,5 +1,6 @@
-# CDK AWS WEBSOCKET 
+# CDK AWS WEBSOCKET application 
 
-Creating an API-GATEWAY using CDK 
+Learning API gateway with the utilization of CDK code 
 
 ** Creates a "message" application 
+
